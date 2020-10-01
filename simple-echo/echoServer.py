@@ -9,7 +9,7 @@ sys.path.append("../lib")       # for params
 import params
 
 switchesVarDefaults = (
-    (('-l', '--listenPort') ,'listenPort', 50001),
+    (('-l', '--listenPort') ,'listenPort', "50001"),
     (('-?', '--usage'), "usage", False), # boolean (set if present)
     )
 

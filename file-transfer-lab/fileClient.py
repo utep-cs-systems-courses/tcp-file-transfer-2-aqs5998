@@ -45,21 +45,9 @@ if s is None:
 s.connect(addrPort)
 
 print("sending hello world")
-framedSend(s, b"outty.txt", debug)
-def utf8len(s):
-    return len(s.encode('utf-8'))
+framedSend(s, b"hello world", debug)
+print("received:", framedReceive(s, debug))
 
-file_to_send = input("type file to send : ")
-
-if (file_to_send):
-    file_copy = open(file_to_send, 'r') #open file
-    file_data = file_copy.read()    #save contents of file
-    if utf8len(file_data) == 0:
-        sys.exit(0)
-    else:
-        framedSend(s, file_data.encode(), debug)
-        print("received:", framedReceive(s, debug))
-else:
-    print("file does not exist.")
-    sys.exit(0)
-
+print("sending hello world")
+framedSend(s, b"hello world", debug)
+print("received:", framedReceive(s, debug))

@@ -37,18 +37,4 @@ while True:
     if not payload:
         break
     payload += b"!"             # make emphatic!
-    simpleVar = payload.decode()
     framedSend(sock, payload, debug)
-    
-    output_file = simpleVar
-
-    if (output_file):
-        payload = framedReceive(sock, debug)
-        output = open(output_file, 'w')
-        payload = payload.decode('utf8')
-        output.write(payload)
-    else:
-        payload = framedReceive(sock, debug)
-        output = open(output_file, 'w')
-        payload = payload.decode('utf8')
-        output.write(payload)
