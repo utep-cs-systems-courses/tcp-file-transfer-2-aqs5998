@@ -3,7 +3,7 @@
 # Echo client program
 import socket, sys, re
 
-sys.path.append("../lib")       # for params
+sys.path.append("./lib")       # for params
 import params
 
 from framedSock import framedSend, framedReceive
@@ -44,10 +44,23 @@ if s is None:
 
 s.connect(addrPort)
 
-print("sending hello world")
-framedSend(s, b"hello world", debug)
-print("received:", framedReceive(s, debug))
+print("Sending the file")
 
-print("sending hello world")
-framedSend(s, b"hello world", debug)
-print("received:", framedReceive(s, debug))
+def utf8len(s):
+    return len(s.encode('utf-8'))
+
+file_to_send = input("type file to send : ")
+textFile = bytes('recieve' +file_to_send, 'utf-8')
+framedSend(s, textFile, debug)
+if (file_to_send):
+    file_copy = open(file_to_send, 'r') #open file
+    file_data = file_copy.read()    #save contents of file
+    if utf8len(file_data) == 0:
+        sys.exit(0)
+    else:
+        framedSend(s, file_data.encode(), debug)
+        print("received:", framedReceive(s, debug))
+else:
+    print("file does not exist.")
+    sys.exit(0)
+
