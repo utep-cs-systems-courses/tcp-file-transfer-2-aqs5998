@@ -1,4 +1,0 @@
-README.md
-fileClient.py
-fileServer.py
-output.txt

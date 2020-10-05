@@ -37,10 +37,17 @@ while True:
     if not payload:
         break
     simpleVar = payload.decode()
-    framedSend(sock, payload, debug)
-    
+    try: 
+        framedSend(sock, payload, debug)
+    except:
+        print("Connection was cut short try again")
+        inputVar = input("Would you like to continue recieving anyways?: yes/no")
+        if inputVar == "yes":
+            continue
+        else:
+            print("Now exiting")
+            sys.exit(0)
     output_file = simpleVar
-
     if (output_file):
         payload = framedReceive(sock, debug)
         output = open(output_file, 'w')
