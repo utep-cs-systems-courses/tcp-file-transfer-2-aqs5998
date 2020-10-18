@@ -46,7 +46,21 @@ sock.connect(addrPort)
 
 fsock = EncapFramedSock((sock, addrPort))
 
-for i in range(2):
-    print("sending hello world")
-    fsock.send( b"hello world", debug)
-    print("received:", fsock.receive(debug))
+
+def utf8len(s):
+    return len(s.encode('utf-8'))
+
+file_to_send = input("type file to send : ")
+textFile = bytes('recieve' +file_to_send, 'utf-8')
+fsock.send(textFile, debug)
+if (file_to_send):
+    file_copy = open(file_to_send, 'r') #open file
+    file_data = file_copy.read()    #save contents of file
+    if utf8len(file_data) == 0:
+        sys.exit(0)
+    else:
+        fsock.send(file_data.encode(), debug)
+        print("received:", fsock.receive(debug))
+else:
+    print("file does not exist.")
+    sys.exit(0)

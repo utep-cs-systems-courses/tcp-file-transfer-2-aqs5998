@@ -41,9 +41,31 @@ class Server(Thread):
                 if debug: print(f"thread connected to {addr} done")
                 self.fsock.close()
                 return          # exit
-            payload += b"!"             # make emphatic!
-            self.fsock.send(payload, debug)
-        
+            simpleVar = payload.decode()
+            try: 
+                self.fsock.send(payload, debug)
+            except:
+                print("Connection was cut short try again")
+                inputVar = input("Would you like to continue recieving anyways?: yes/no")
+                if inputVar == "yes":
+                    continue
+                else:
+                    print("Now exiting")
+                    sys.exit(0)
+            output_file = simpleVar
+            if (output_file):
+                payload = self.fsock.receive(debug)
+                output = open(output_file, 'w')
+                payload = payload.decode('utf8')
+                output.write(payload)
+                self.fsock.send(payload, debug)
+            else:
+                payload = self.fsock.receive(debug)
+                output = open(output_file, 'w')
+                payload = payload.decode('utf8')
+                output.write(payload)
+                self.fsock.send(payload, debug)
+                
 
 while True:
     sockAddr = lsock.accept()
