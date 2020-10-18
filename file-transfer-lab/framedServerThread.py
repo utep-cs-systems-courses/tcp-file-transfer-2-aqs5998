@@ -58,7 +58,7 @@ class Server(Thread):
                 output = open(output_file, 'w')
                 payload = payload.decode('utf8')
                 output.write(payload)
-                self.fsock.send(payload, debug)
+                #self.fsock.send(payload, debug)
             else:
                 payload = self.fsock.receive(debug)
                 output = open(output_file, 'w')
