@@ -58,38 +58,43 @@ class Server(Thread):
                     print("Now exiting")
                     sys.exit(0)
             output_file = simpleVar
+            #aquire lock
+            #Check to see 
+            # if file is in dictionary
+            if output_file in dictionary:
+                #Write to the client failure
+                self.fsock.send(b"False", debug)     
+                l.release()
+                exit
+            else:
+                dictionary.update(output_file)
+                l.release()
+            #      release lock
+            #      exit
+            #Else 
+            #       Add to dictionary
+            #release lock
             if (output_file):
                 payload = self.fsock.receive(debug)
                 output = open(output_file, 'wb')
                 output.write(payload)
                 #self.fsock.send(payload, debug)
             else:
-                #Lock aquire to prevent other processes from access
-                l.acquire() 
-                curr = dictionary.get(payload)
-                if curr == 'busy':
-                    self.fsock.send(b"True", debug)
-                    #Lock relase to allow access
-                    l.release()
-                else:
-                    dictionary[payload] = "busy"
-                    self.fsock.send(b"False", debug)      
-                    payload = self.fsock.receive(debug)
-                    output = open(output_file, 'wb')
-                    output.write(payload)
-                    try:
-                        self.fsock.send(payload, debug)
-                    except:
-                        print("connection lost while sending.")
-                        print("connection lost while sending.")
-                        print("connection lost while sending.")
-                    output.close()
-                    #Lock relase to allow access 
-                    l.release()  
-                    #Delete dictionary 
-                    l.acquire()       
-                    del dictionary[payload]
-                    l.release()
+                #Lock aquire to prevent other processes from access 
+                payload = self.fsock.receive(debug)
+                output = open(output_file, 'wb')
+                output.write(payload)
+                try:
+                    self.fsock.send(payload, debug)
+                except:
+                    print("connection lost while sending.")
+                    print("connection lost while sending.")
+                    print("connection lost while sending.")
+                output.close()
+                #Delete dictionary 
+                l.acquire()       
+                del dictionary[payload]
+                l.release()
                 
 
 while True:
