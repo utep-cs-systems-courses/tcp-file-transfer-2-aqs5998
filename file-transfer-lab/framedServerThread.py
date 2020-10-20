@@ -4,6 +4,7 @@ import sys
 sys.path.append("../lib")       # for params
 import re, socket, params, os
 
+
 switchesVarDefaults = (
     (('-l', '--listenPort') ,'listenPort', 50001),
     (('-d', '--debug'), "debug", False), # boolean (set if present)
@@ -24,8 +25,12 @@ lsock.bind(bindAddr)
 lsock.listen(5)
 print("listening on:", bindAddr)
 
-from threading import Thread;
+from threading import Thread, enumerate, Lock 
 from encapFramedSock import EncapFramedSock
+global dictionary   #Initialize Variables
+global l
+l = Lock()
+dictionary = dict()
 
 class Server(Thread):
     def __init__(self, sockAddr):
@@ -55,16 +60,36 @@ class Server(Thread):
             output_file = simpleVar
             if (output_file):
                 payload = self.fsock.receive(debug)
-                output = open(output_file, 'w')
-                payload = payload.decode('utf8')
+                output = open(output_file, 'wb')
                 output.write(payload)
                 #self.fsock.send(payload, debug)
             else:
-                payload = self.fsock.receive(debug)
-                output = open(output_file, 'w')
-                payload = payload.decode('utf8')
-                output.write(payload)
-                self.fsock.send(payload, debug)
+                #Lock aquire to prevent other processes from access
+                l.acquire() 
+                curr = dictionary.get(payload)
+                if curr == 'busy':
+                    self.fsock.send(b"True", debug)
+                    #Lock relase to allow access
+                    l.release()
+                else:
+                    dictionary[payload] = "busy"
+                    self.fsock.send(b"False", debug)      
+                    payload = self.fsock.receive(debug)
+                    output = open(output_file, 'wb')
+                    output.write(payload)
+                    try:
+                        self.fsock.send(payload, debug)
+                    except:
+                        print("connection lost while sending.")
+                        print("connection lost while sending.")
+                        print("connection lost while sending.")
+                    output.close()
+                    #Lock relase to allow access 
+                    l.release()  
+                    #Delete dictionary 
+                    l.acquire()       
+                    del dictionary[payload]
+                    l.release()
                 
 
 while True:
