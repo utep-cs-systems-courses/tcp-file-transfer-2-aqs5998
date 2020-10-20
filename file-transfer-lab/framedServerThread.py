@@ -4,6 +4,11 @@ import sys
 sys.path.append("../lib")       # for params
 import re, socket, params, os
 
+"""Sending Recieving framed data using the stammer proxy
+Fork
+Thread
+Lock
+"""
 
 switchesVarDefaults = (
     (('-l', '--listenPort') ,'listenPort', 50001),
