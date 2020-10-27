@@ -35,7 +35,7 @@ from encapFramedSock import EncapFramedSock
 global dictionary   #Initialize Variables
 global l
 l = Lock()
-dictionary = dict()
+lister = []
 
 class Server(Thread):
     def __init__(self, sockAddr):
@@ -66,15 +66,17 @@ class Server(Thread):
             #aquire lock
             #Check to see 
             # if file is in dictionary
-            if output_file in dictionary:
+            if output_file in lister:
                 #Write to the client failure
+                l.acquire()   
                 payload += b"FAILED CURRENTLY BEING USED!!!FAILED CURRENTLY BEING USED!!!" 
                 self.fsock.send(payload, debug)
                 self.fsock.send(b"False", debug)     
                 l.release()
                 exit
             else:
-                dictionary.update(output_file)
+                l.acquire()   
+                lister.append(output_file)
                 l.release()
             #release lock
             #exit
@@ -99,7 +101,7 @@ class Server(Thread):
                 output.close()
                 #Delete dictionary 
                 l.acquire()       
-                del dictionary[payload]
+                del lister[payload]
                 l.release()
                 
 
