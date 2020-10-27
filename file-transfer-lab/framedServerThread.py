@@ -68,16 +68,18 @@ class Server(Thread):
             # if file is in dictionary
             if output_file in dictionary:
                 #Write to the client failure
+                payload += b"FAILED CURRENTLY BEING USED!!!FAILED CURRENTLY BEING USED!!!" 
+                self.fsock.send(payload, debug)
                 self.fsock.send(b"False", debug)     
                 l.release()
                 exit
             else:
                 dictionary.update(output_file)
                 l.release()
-            #      release lock
-            #      exit
+            #release lock
+            #exit
             #Else 
-            #       Add to dictionary
+            #Add to dictionary
             #release lock
             if (output_file):
                 payload = self.fsock.receive(debug)
@@ -85,7 +87,6 @@ class Server(Thread):
                 output.write(payload)
                 #self.fsock.send(payload, debug)
             else:
-                #Lock aquire to prevent other processes from access 
                 payload = self.fsock.receive(debug)
                 output = open(output_file, 'wb')
                 output.write(payload)
